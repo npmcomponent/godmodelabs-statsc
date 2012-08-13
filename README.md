@@ -1,9 +1,16 @@
 StatsC
 ======
 
-Push Stats to StatsD on the Client
+StatsC lets you log statistics to your graphite/statsd servers straight from the browser.
 
-* Fire and forget
+Just like StatsD, StatsC is a fire and forget thing. StatsC can't take your site down if it fails, only statistics won't get logged.
+
+It supports 2 transports:
+
+* **Ajax** (default): Statistics are aggregated and flushed every 10s
+* **Websockets**: Statistics are transmitted immediately
+
+However websockets are only recommended if you already have socket.io included in your site.
 
 Usage
 =====
