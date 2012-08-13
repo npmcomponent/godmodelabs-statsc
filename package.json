@@ -1,0 +1,7 @@
+{
+	"name": "statsc",
+	"version": "0.0.1",
+	"dependencies": {
+		"node-statsd": "git://github.com/juliangruber/node-statsd.git"
+	}
+}
