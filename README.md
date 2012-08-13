@@ -12,25 +12,41 @@ It supports 2 transports:
 
 However websockets are only recommended if you already have socket.io included in your site.
 
+Installation
+============
+
+Server
+------
+
+```bash
+git clone git://github.com/juliangruber/statsc.git
+cd statsc
+npm install
+node server
+```
+
+Client
+------
+
+In your `<head>`:
+
+```html
+<script src="https://raw.github.com/juliangruber/statsc/master/client.js">
+  statsc.connect('addr:port'); // by default connects to localhost:8126
+</script>
+```
+
 Usage
 =====
 
-* Include `client.js` in your `<head>`
-
-```html
-<script src="https://raw.github.com/juliangruber/statsc/master/client.js"></script>
-```
-
-* Connect to your statsc server. By default, `statsc.connect()` connects to `localhost:8126`.
-
-```javascript
-statsc.connect('addr:port');
-```
-
-* Start logging!
-
 Counters
 --------
+
+Simple counters for
+* pageviews
+* features uses
+* subscriptions
+* etc.
 
 ```javascript
 statsc.increment('name');
@@ -40,12 +56,21 @@ statsc.decrement('name');
 Gauges
 ------
 
+Stores arbitrary numeric values for
+* sizes of api responses
+* etc.
+
 ```javascript
 statsc.gauge('name', 1337);
 ```
 
 Timers
 ------
+
+Timers get averaged, their 90th percentile gets calculated etc. Use for:
+* benchmarks
+* load times
+* etc.
 
 There are several possibilities for logging time values:
 
@@ -57,6 +82,14 @@ var finished = statsc.timer('name');
 finished();
 ```
 
+* Sync style
+
+```javascript
+statsd.timing('name', function() {
+  // do sync stuff
+});
+```
+
 * By passing a `date` object
 
 ```javascript
@@ -65,18 +98,10 @@ var start = new Date();
 statsc.timing('name', start); // calculates diff
 ```
 
-* Manually
+* By passing a value in miliseconds
 
 ```javascript
 var ts = new Date().getTime();
 // do stuff
 statsc.timing('name', new Date().getTime()-ts);
-```
-
-* Sync style
-
-```javascript
-statsd.timing('name', function() {
-  // do sync stuff
-});
 ```
