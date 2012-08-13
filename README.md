@@ -32,7 +32,7 @@ In your `<head>`:
 
 ```html
 <script src="https://raw.github.com/juliangruber/statsc/master/client.js"></script>
-<script> statsc.connect('addr:port'); // by default connects to localhost:8126 </script>
+<script> statsc.connect('addr:port'); /* by default connects to localhost:8126 */ </script>
 ```
 
 Usage
