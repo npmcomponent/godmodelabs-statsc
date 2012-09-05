@@ -1,9 +1,7 @@
-var http = require('http');
-var url = require('url');
 var log = new require('statistik')();
 var validMethods = ['increment', 'decrement', 'timing', 'gauge', 'send'];
 
-var server = http.createServer(function(req, res) {
+function server(req, res) {
   res.writeHead(200, {'Content-Type': 'application/javascript'});
 	try {
 	  if (req.method != 'GET') throw Error('Not supported');
@@ -19,16 +17,21 @@ var server = http.createServer(function(req, res) {
         throw Error('Method `'+op[0]+'` not supported');
       }
       log[op[0]].apply(log, op.splice(1));
+      log.increment('client.stats.collected');
     }
 		res.end('"OK";');
   } catch(e) {
     res.end('"'+e.toString()+'";');
     console.error(e);
   }
-});
+}
 
 function isArray(o) {
   return typeof o == 'object' && o instanceof Array;
 }
 
-server.listen(8126);
+var http = require('http');
+
+http.createServer(server).listen(8126, function() {
+  console.log('StatsC server listening on port 8126');
+});
