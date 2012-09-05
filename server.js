@@ -30,6 +30,11 @@ function server(req, res) {
     // must be array
     if (!isArray(op)) return warn('op must be Array', res);
     
+    // must have 3 or 4 arguments
+    if (op.length > 4 || op.length < 3) {
+      return warn('Too many arguments', op, res);
+    }
+
     // must only consist of strings and numbers
     if (typeof op[0] != 'string') {
       return warn('1st arg must be method, is', op[0], res);
@@ -54,9 +59,6 @@ function server(req, res) {
       }
     }
     if (!valid) return warn('Method `'+op[0]+'` not supported', res);
-    
-    // must have max. 3 arguments + 1 method
-    if (op.length > 4) return warn('Too many arguments', op, res);
     
     // log away, everything's fine
     try {
