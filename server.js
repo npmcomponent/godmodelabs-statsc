@@ -69,7 +69,7 @@ function server(req, res) {
     log.increment('client.stats.collected');
   }
 
-	res.end('"OK";');
+  res.end('"OK";');
 }
 
 function isArray(o) {
