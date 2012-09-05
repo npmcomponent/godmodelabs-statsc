@@ -56,7 +56,7 @@ function server(req, res) {
     if (!valid) return warn('Method `'+op[0]+'` not supported', res);
     
     // must have max. 3 arguments + 1 method
-    if (op.length > 5) return warn('Too many arguments', op, res);
+    if (op.length > 4) return warn('Too many arguments', op, res);
     
     // log away, everything's fine
     try {
