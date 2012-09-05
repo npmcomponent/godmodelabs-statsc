@@ -1,5 +1,13 @@
 ;(function() {
 
+  /**
+   * abbrevations:
+   *   i = increment
+   *   d = decrement
+   *   t = timing
+   *   g = gauge
+   */
+
   var statsc = {};
   var addr, tag;
 
@@ -12,49 +20,52 @@
     addr = 'http://localhost:8126/';
   };
 
-  statsc.increment = function(counter, sampleRate) {
-    queue.push(['increment', counter, sampleRate]);
+  statsc.increment = function(stat, sampleRate) {
+    queue.push(['i', stat, sampleRate]);
   };
 
-  statsc.decrement = function(counter, sampleRate) {
-    queue.push(['decrement', counter, sampleRate]);
+  statsc.decrement = function(stat, sampleRate) {
+    queue.push(['d', stat, sampleRate]);
   };
 
-  statsc.gauge = function(gauge, value, sampleRate) {
-    queue.push(['gauge', value, sampleRate]);
+  statsc.gauge = function(stat, value, sampleRate) {
+    queue.push(['g', stat, value, sampleRate]);
   };
 
-  function fromNow(time) {
-    return new Date().getTime() - time;
-  }
-
-  statsc.timing = function(timing, time, sampleRate) {
-    if ('number' == typeof time) return queue.push(['timing', time, sampleRate]);
-    if (time instanceof Date) return queue.push(['timing', fromNow(time.getTime()), sampleRate]);
+  statsc.timing = function(stat, time, sampleRate) {
+    if ('number' == typeof time) return queue.push(['t', stat, time, sampleRate]);
+    if (time instanceof Date) return queue.push(['t', stat, fromNow(time.getTime()), sampleRate]);
     if ('function' == typeof time) {
       var start = new Date().getTime();
       time();
-      return queue.push(['timing', fromNow(start), sampleRate]);
+      return queue.push(['t', stat, fromNow(start), sampleRate]);
     }
   };
 
-  statsc.timer = function(timing, sampleRate) {
+  statsc.timer = function(stat, sampleRate) {
     var start = new Date().getTime();
 
     return function() {
-      queue.push(['timing', fromNow(start), sampleRate]);
+      queue.push(['t', stat, fromNow(start), sampleRate]);
     }
   };
 
   setInterval(function() {
     if (queue.length > 0) {
-      // $.post(addr, JSON.stringify(queue), function(data) {
-      //         queue = [];
-      //         console.log(data);
-      //       }).error(function() { /* no-op */ });
+      // clear null values
+      for (var i = 0; i < queue.length; i++) {
+        for (var j = 0; j < queue[i].length; j++) {
+          if (queue[i][j] == null) queue[i].splice(j, 1);
+        }
+      }
       tag.src = addr+JSON.stringify(queue);
+      queue = [];
     }
   }, 5000);
+  
+  function fromNow(time) {
+    return new Date().getTime() - time;
+  }
 
   window.statsc = statsc;
 

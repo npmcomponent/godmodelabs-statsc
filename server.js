@@ -1,5 +1,11 @@
 var log = new require('statistik')();
-var validMethods = ['increment', 'decrement', 'timing', 'gauge', 'send'];
+var methods = {
+  i: 'increment',
+  d: 'decrement',
+  t: 'timing',
+  g: 'gauge',
+  s: 'send'
+}
 
 function server(req, res) {
   res.writeHead(200, {'Content-Type': 'application/javascript'});
@@ -18,30 +24,38 @@ function server(req, res) {
   
   var op;
   for (var i = 0, len = ops.length; i < len; i++) {
-    // op = [method, stat, (value/sampleRate), (sampleRate/method), (sampleRate)]
+    // op = [method, stat, (value/sampleRate), (sampleRate)]
     op = ops[i];
     
     // must be array
     if (!isArray(op)) return warn('op must be Array', res);
     
-    // must only consist of strings, numbers and nulls (sampleRate)
-    var isString, isNumber, isObject, isNull;
-    for (var j = 0, len = op.length; j < len; j++) {
-      isString = typeof op[j] == 'string';
-      isNumber = typeof op[j] == 'number';
-      isObject = typeof op[j] == 'object';
-      isNull = op[j] == null;
-      if (!isString && !isNumber && !(isObject && isNull)) {
-        return warn('invalid types, given: ', op[j], res);
-      }
+    // must only consist of strings and numbers
+    if (typeof op[0] != 'string') {
+      return warn('1st arg must be method, is', op[0], res);
+    }
+    if (typeof op[1] != 'string') {
+      return warn('2nd arg must be stat, is', op[1], res);
+    }
+    if (typeof op[2] != 'undefined' && typeof op[2] != 'number') {
+      return warn('3rd arg must be number, is', op[2], res);
+    }
+    if (typeof op[3] != 'undefined' && typeof op[3] != 'number') {
+      return warn('4rd arg must be number, is', op[3], res);
     }
     
     // must call valid method
-    if (validMethods.indexOf(op[0]) == -1) {
-      return warn('Method `'+op[0]+'` not supported', res);
+    var valid = false;
+    for (abr in methods) {
+      if (abr == op[0]) {
+        op[0] = methods[abr];
+        valid = true;
+        break;
+      }
     }
+    if (!valid) return warn('Method `'+op[0]+'` not supported', res);
     
-    // must have max. 4 arguments + 1 method
+    // must have max. 3 arguments + 1 method
     if (op.length > 5) return warn('Too many arguments', op, res);
     
     // log away, everything's fine
@@ -62,7 +76,7 @@ function isArray(o) {
 
 function warn(str, arg, res) {
   if (arguments.length == 3) {
-    res.end('"'+str+arg+'";');
+    res.end('"'+str+' '+arg+'";');
     console.error(str, arg);
   } else {
     arg.end('"'+str+'";');
