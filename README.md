@@ -6,7 +6,8 @@ StatsC lets you log statistics to your graphite/statsd servers straight from the
 Just like StatsD, StatsC is a fire and forget thing. StatsC can't take your site down if it fails, only statistics won't get logged.
 
 StatsC is __transport agnostic__ so you can use whatever transport method you want.
-By default it uses script-tags to provide cross domain ajax without using any libraries.
+
+By default it uses script-tags to provide cross domain ajax without using any libraries. Logging operations are buffered for 5s and then transmitted together.
 
 Installation
 ------------
