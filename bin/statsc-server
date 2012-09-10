@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+var statsc = require('../');
+var http = require('http');
+
+http.createServer(statsc.http).listen(8126, function() {
+  console.log('StatsC server listening on port 8126');
+});
