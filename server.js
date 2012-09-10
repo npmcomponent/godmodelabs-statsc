@@ -1,4 +1,18 @@
+/**
+ * Module dependencies
+ */
 var log = new require('statistik')();
+
+/**
+ * StatsC server
+ * @type {Object}
+ */
+var statsc = {};
+
+/**
+ * used for url shortening
+ * @type {Object}
+ */
 var methods = {
   i: 'increment',
   d: 'decrement',
@@ -7,87 +21,116 @@ var methods = {
   s: 'send'
 }
 
-function server(req, res) {
-  res.writeHead(200, {'Content-Type': 'application/javascript'});
+/**
+ * HTTP server handle
+ * 
+ * Pass to http(s).createServer() in order to handle the standard script-tag
+ * transport.
+ *
+ * @throws {String} If invalid data is given
+ * @param  {object} req
+ * @param  {object} res
+ */
+statsc.http = function(req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
   
-  if (req.method != 'GET') return warn('Only GET supported', res);
+  if (req.method != 'GET') return res.end('Only GET supported');
   
   var url = decodeURIComponent(req.url).replace(/\//g, '');
   if (url == 'favicon.ico') return res.end();
-  if (url[0] != '[') return warn('File serving not supported', res);
+  if (url[0] != '[') return res.end('File serving not supported');
   
   try {
     var ops = JSON.parse(url);
   } catch (err) {
-    return warn(err, res);
+    return res.end(err.toString());
   }
   
-  var op;
   for (var i = 0, len = ops.length; i < len; i++) {
-    // op = [method, stat, (value/sampleRate), (sampleRate)]
-    op = ops[i];
-    
-    // must be array
-    if (!isArray(op)) return warn('op must be Array', res);
-    
-    // must have 3 or 4 arguments
-    if (op.length > 4 || op.length < 2) {
-      return warn('Wrong number of arguments: ', op, res);
-    }
-
-    // must only consist of strings and numbers
-    if (typeof op[0] != 'string') {
-      return warn('1st arg must be method, is', op[0], res);
-    }
-    if (typeof op[1] != 'string') {
-      return warn('2nd arg must be stat, is', op[1], res);
-    }
-    if (typeof op[2] != 'undefined' && typeof op[2] != 'number') {
-      return warn('3rd arg must be number, is', op[2], res);
-    }
-    if (typeof op[3] != 'undefined' && typeof op[3] != 'number') {
-      return warn('4rd arg must be number, is', op[3], res);
-    }
-    
-    // must call valid method
-    var valid = false;
-    for (abr in methods) {
-      if (abr == op[0]) {
-        op[0] = methods[abr];
-        valid = true;
-        break;
-      }
-    }
-    if (!valid) return warn('Method `'+op[0]+'` not supported', res);
-    
-    // log away, everything's fine
     try {
-      log[op[0]].apply(log, op.splice(1));
-    } catch (err) {
-      return warn(err, res);
+      statsc.receive(ops[i]);
+    } catch(err) {
+      return res.end(err.toString());
     }
-    log.increment('client.stats.collected');
   }
 
-  res.end('"OK";');
+  res.end('OK');
 }
 
+/**
+ * Logs `op` to StatsD.
+ *
+ * Format for `op`:
+ *   op = [method, stat, (value/sampleRate), (sampleRate)]
+ *
+ * @throws {String} If `op` isn't valid
+ * @param  {array}  op
+ */
+statsc.receive = function(op) {
+  // must be array
+  if (!isArray(op)) throw 'op must be Array, is: '+s(op);
+  
+  // must have 2-4 arguments
+  if (op.length < 2 || op.length > 4) {
+    throw 'Wrong number of arguments: '+s(op);
+  }
+
+
+  // must only consist of strings and numbers
+  if (typeof op[0] != 'string') throw '1st arg must be method, is '+s(op[0]);
+  if (typeof op[1] != 'string') throw '2nd arg must be stat, is: '+s(op[1]);
+  if (typeof op[2] != 'undefined' && typeof op[2] != 'number') {
+    throw '3rd arg must be number, is: '+s(op[2]);
+  }
+  if (typeof op[3] != 'undefined' && typeof op[3] != 'number') {
+    throw '4rd arg must be number, is: '+s(op[3]);
+  }
+  
+  // must call valid method
+  var valid = false;
+  for (abr in methods) {
+    if (abr == op[0]) {
+      op[0] = methods[abr];
+      valid = true;
+      break;
+    }
+  }
+  if (!valid) throw 'Method `'+op[0]+'` not supported';
+  
+  // log away, everything's fine
+  log[op[0]].apply(log, op.splice(1));
+  log.increment('client.stats.collected');
+}
+
+/**
+ * Utilify function array checker
+ * 
+ * @param  {object}  o
+ * @return {Boolean}
+ */
 function isArray(o) {
   return typeof o == 'object' && o instanceof Array;
 }
 
-function warn(str, arg, res) {
-  if (arguments.length == 3) {
-    res.end('"'+str+' '+arg+'";');
-    console.error(str, arg);
-  } else {
-    arg.end('"'+str+'";');
-    console.error(str);
-  }
+/**
+ * JSON.Stringify shortened
+ * @param  {object} o
+ * @return {string}
+ */
+function s(o) {
+  return JSON.stringify(o);
 }
 
+/**
+ * Expose StatsC to the world if included inside other module.
+ */
+if (module.parent) return module.exports = statsc;
+
+/**
+ * If not included inside other module, start standard http server.
+ */
 var http = require('http');
 
-http.createServer(server).listen(8126, function() {
+http.createServer(statsc.http).listen(8126, function() {
   console.log('StatsC server listening on port 8126');
 });
