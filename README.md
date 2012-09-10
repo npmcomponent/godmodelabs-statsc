@@ -14,10 +14,24 @@ Installation
 ### Server
 
 ```bash
-git clone git://github.com/juliangruber/statsc.git
-cd statsc
-npm install
-node server
+$ sudo npm install -g statsc
+$ statsc-server
+  StatsC server listening on port 8126
+```
+
+or
+
+```bash
+$ npm install statsc
+```
+
+```javascript
+var statsc = require('statsc');
+var http = require('http');
+
+http.createServer(statsc.http).listen(8126, function() {
+  console.log('StatsC server listening on port 8126');
+});
 ```
 
 ### Client
@@ -38,8 +52,27 @@ var port = availablePorts[Math.round(Math.random()*availablePorts.length)-1];
 stats.connect('addr:'+port);
 ```
 
-API
----
+Server API
+----------
+
+### statsc.http(req, res)
+HTTP(s) server handle. Pass to http(s).createServer() in order to handle the standard script-tag transport.
+
+### statsc.receive(op)
+Logs `op` to StatsD.
+
+You have to use this if you don't use `statsc.http`.
+
+Example with Learnboost/socket.io:
+
+```javascript
+socket.on('statsc', function(data) {
+ statsc.receive(data);
+});
+```
+
+Client API
+----------
 
 ### statsc.connect(addr)
 Use this if the server isnt listening on `http://localhost:8126` or perhaps if you are using a custom `send` method.
@@ -75,7 +108,9 @@ Overwrite this if you want to use websockets or jsonp or whatever.
 Example using LearnBoost/socket.io:
 
 ```javascript
-statsc.send = function(data) { socket.emit('statsc', data); };
+statsc.send = function(data) {
+ socket.emit('statsc', data);
+};
 ```
 
 License
