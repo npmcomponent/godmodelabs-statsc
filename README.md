@@ -13,10 +13,9 @@ It supports 2 transports:
 However websockets are only recommended if you already have socket.io included in your site.
 
 Installation
-============
+------------
 
-Server
-------
+### Server
 
 ```bash
 git clone git://github.com/juliangruber/statsc.git
@@ -25,17 +24,17 @@ npm install
 node server
 ```
 
-Client
-------
+### Client
 
 In your `<head>`:
 
 ```html
 <script src="https://raw.github.com/juliangruber/statsc/master/client.js"></script>
-<script> statsc.connect('addr:port'); /* by default connects to localhost:8126 */ </script>
 ```
 
-By the way you can scale this thing up easily by just picking one of your available servers randomly, like:
+StatsC automatically sends collected metrics to `http://localhost:8126/` over the standard transport.
+
+You can scale this thing up easily by just picking one of your available servers randomly, like:
 
 ```javascript
 var availablePorts = [8127, 8128, 8129];
@@ -43,72 +42,54 @@ var port = availablePorts[Math.round(Math.random()*availablePorts.length)-1];
 stats.connect('addr:'+port);
 ```
 
-Usage
-=====
+API
+---
 
-Counters
---------
+### statsc.connect(addr)
+Use this if the server isnt listening on `http://localhost:8126` or perhaps if you are using a custom `send` method.
 
-Simple counters for
-* pageviews
-* features uses
-* subscriptions
-* etc.
+### statsc.increment(stat[, sampleRate])
+Increment the counter at `stat` by 1.
 
-```javascript
-statsc.increment('name');
-statsc.decrement('name');
-```
+### statsc.decrement(stat[, sampleRate])
+Decrement the counter at `stat` by 1.
 
-Gauges
-------
+### statsc.gauge(stat, value[, sampleRate])
+Set the gauge at `stat` to `value`.
 
-Stores arbitrary numeric values for
-* sizes of api responses
-* etc.
+### statsc.timing(stat, time[, sampleRate])
+Log `time` to `stat`.
 
-```javascript
-statsc.gauge('name', 1337);
-```
+`time` can either be
 
-Timers
-------
+  * a number in milliseconds
+  * a Date object, created at the timer's start
+  * a synchronous function to be timed
 
-Timers get averaged, their 90th percentile gets calculated etc. Use for:
-* benchmarks
-* load times
-* etc.
+### statsc.timer(stat[, sampleRate])
+Timer utility in functional style.
 
-There are several possibilities for logging time values:
+Returns a function you can call when you want to mark your timer as resolved.
 
-* Functional style
+### statsc.send(data)
+Standard implementation of a `send` method using script tags. This shouldn't need to be called manually.
+
+Overwrite this if you want to use websockets or jsonp or whatever.
+
+Example using LearnBoost/socket.io:
 
 ```javascript
-var finished = statsc.timer('name');
-// do stuff
-finished();
+statsc.send = function(data) { socket.emit('statsc', data); };
 ```
 
-* Sync style
+License
+-------
+(MIT)
 
-```javascript
-statsd.timing('name', function() {
-  // do sync stuff
-});
-```
+Copyright (c) 2012 Julian Gruber <jgruber@boerse-go.de>
 
-* By passing a `date` object
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-```javascript
-var start = new Date();
-// do stuff
-statsc.timing('name', start); // calculates diff
-```
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-* By passing a value in miliseconds
-
-```javascript
-var ts = new Date().getTime();
-// do stuff
-statsc.timing('name', new Date().getTime()-ts);
-```
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

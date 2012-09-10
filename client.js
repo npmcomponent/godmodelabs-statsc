@@ -14,7 +14,7 @@
   /**
    * Set the statsc server address.
    *
-   * Use this if the server'n not listening on `http://localhost:8126`
+   * Use this if the server isnt listening on `http://localhost:8126`
    * or perhaps if you are using a custom `send` method.
    * 
    * @param  {[type]} _addr [description]
@@ -45,7 +45,7 @@
   };
 
   /**
-   * Log absolute `value` to `stat`.
+   * Set the gauge at `stat` to `value`.
    * 
    * @param  {string} stat
    * @param  {number} value
@@ -84,7 +84,7 @@
   /**
    * Timer utility in functional style.
    * 
-   * Returns a function you can call when you wan't to mark your timer as
+   * Returns a function you can call when you want to mark your timer as
    * resolved.
    * 
    * @param  {string}   stat
