@@ -31,8 +31,8 @@ function server(req, res) {
     if (!isArray(op)) return warn('op must be Array', res);
     
     // must have 3 or 4 arguments
-    if (op.length > 4 || op.length < 3) {
-      return warn('Too many arguments', op, res);
+    if (op.length > 4 || op.length < 2) {
+      return warn('Wrong number of arguments: ', op, res);
     }
 
     // must only consist of strings and numbers

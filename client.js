@@ -9,15 +9,12 @@
    */
 
   var statsc = {};
-  var addr, tag;
+  var addr;
 
   var queue = [];
 
   statsc.connect = function(_addr) {
-    tag = document.createElement('script');
-    document.getElementsByTagName('head')[0].appendChild(tag);
-    if (_addr) return addr = _addr;
-    addr = 'http://localhost:8126/';
+    addr = _addr || 'http://localhost:8126/';
   };
 
   statsc.increment = function(stat, sampleRate) {
@@ -50,6 +47,15 @@
     }
   };
 
+  statsc.send = (function() {
+    var tag = document.createElement('script');
+    document.getElementsByTagName('head')[0].appendChild(tag);
+
+    return function() {
+      tag.src = addr+JSON.stringify(queue);
+    }
+  })();
+
   setInterval(function() {
     if (queue.length > 0) {
       // clear null values
@@ -58,7 +64,7 @@
           if (queue[i][j] == null) queue[i].splice(j, 1);
         }
       }
-      tag.src = addr+JSON.stringify(queue);
+      statsc.send();
       queue = [];
     }
   }, 5000);
