@@ -1,12 +1,9 @@
 <html>
 <head>
 	<title>statsc</title>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
 	<script src="client.js"></script>
 	<script type="text/javascript">
-		statsc.connect();
-
-  		window.onload = function() {
+  		window.addEventListener('load', function() {
   			statsc.increment('test');
   			statsc.decrement('test');
   			statsc.gauge('test', 1337);
@@ -107,7 +104,7 @@
   			statsc.timing('timer-date', start);
   			var ts = new Date().getTime();
   			statsc.timing('ts-date', 10);
-  		}
+  		});
 	</script>
 </head>
 <body>

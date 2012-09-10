@@ -9,70 +9,144 @@
    */
 
   var statsc = {};
-  var addr;
+  var addr = 'http://localhost:8126/';
 
-  var queue = [];
-
+  /**
+   * Set the statsc server address.
+   *
+   * Use this if the server'n not listening on `http://localhost:8126`
+   * or perhaps if you are using a custom `send` method.
+   * 
+   * @param  {[type]} _addr [description]
+   * @return {[type]}       [description]
+   */
   statsc.connect = function(_addr) {
-    addr = _addr || 'http://localhost:8126/';
+    addr = _addr;
   };
 
+  /**
+   * Increment the counter at `stat` by one.
+   * 
+   * @param  {string} stat
+   * @param  {number} sampleRate
+   */
   statsc.increment = function(stat, sampleRate) {
-    queue.push(['i', stat, sampleRate]);
+    statsc.send(['i', stat, sampleRate]);
   };
 
+  /**
+   * Decrement the counter at `stat` by one.
+   * 
+   * @param  {string} stat
+   * @param  {number} sampleRate
+   */
   statsc.decrement = function(stat, sampleRate) {
-    queue.push(['d', stat, sampleRate]);
+    statsc.send(['d', stat, sampleRate]);
   };
 
+  /**
+   * Log absolute `value` to `stat`.
+   * 
+   * @param  {string} stat
+   * @param  {number} value
+   * @param  {number} sampleRate
+   */
   statsc.gauge = function(stat, value, sampleRate) {
-    queue.push(['g', stat, value, sampleRate]);
+    statsc.send(['g', stat, value, sampleRate]);
   };
 
+  /**
+   * Log `time` to `stat`.
+   *
+   * `time` can either be
+   *   - a number in milliseconds
+   *   - a Date object, created at the timer's start
+   *   - a synchronous function to be timed
+   * 
+   * @param  {string}               stat
+   * @param  {number|Date|function} time
+   * @param  {number}               sampleRate
+   */
   statsc.timing = function(stat, time, sampleRate) {
-    if ('number' == typeof time) return queue.push(['t', stat, time, sampleRate]);
-    if (time instanceof Date) return queue.push(['t', stat, fromNow(time.getTime()), sampleRate]);
+    if ('number' == typeof time) {
+      return statsc.send(['t', stat, time, sampleRate]);
+    }
+    if (time instanceof Date) {
+      return statsc.send(['t', stat, fromNow(time), sampleRate]);
+    }
     if ('function' == typeof time) {
-      var start = new Date().getTime();
+      var start = new Date();
       time();
-      return queue.push(['t', stat, fromNow(start), sampleRate]);
+      statsc.send(['t', stat, fromNow(start), sampleRate]);
     }
   };
 
+  /**
+   * Timer utility in functional style.
+   * 
+   * Returns a function you can call when you wan't to mark your timer as
+   * resolved.
+   * 
+   * @param  {string}   stat
+   * @param  {number}   sampleRate
+   * @return {function}
+   */
   statsc.timer = function(stat, sampleRate) {
     var start = new Date().getTime();
 
     return function() {
-      queue.push(['t', stat, fromNow(start), sampleRate]);
+      statsc.send(['t', stat, fromNow(start), sampleRate]);
     }
   };
 
+  /**
+   * Standard implementation of a `send` method.
+   *
+   * Overwrite this if you want to use websockets or jsonp or whatever.
+   *
+   * @param {array} data
+   */
   statsc.send = (function() {
-    var tag = document.createElement('script');
-    document.getElementsByTagName('head')[0].appendChild(tag);
-
-    return function() {
-      tag.src = addr+JSON.stringify(queue);
-    }
-  })();
-
-  setInterval(function() {
-    if (queue.length > 0) {
-      // clear null values
-      for (var i = 0; i < queue.length; i++) {
-        for (var j = 0; j < queue[i].length; j++) {
-          if (queue[i][j] == null) queue[i].splice(j, 1);
+    var queue = [];
+    var tag;
+    setInterval(function() {
+      if (queue.length > 0) {
+        // clear null values
+        for (var i = 0; i < queue.length; i++) {
+          for (var j = 0; j < queue[i].length; j++) {
+            if (queue[i][j] == null) queue[i].splice(j, 1);
+          }
         }
+        if (!tag) {
+          tag = document.createElement('script');
+          document.getElementsByTagName('head')[0].appendChild(tag);
+        }
+        tag.src = addr+JSON.stringify(queue);
+        queue = [];
       }
-      statsc.send();
-      queue = [];
-    }
-  }, 5000);
+    }, 5000);
+
+    return function(data) { queue.push(data); }
+  })();
   
-  function fromNow(time) {
-    return new Date().getTime() - time;
+  /**
+   * Calculate the difference between `now` and the given Date object.
+   * 
+   * @param  {object} time
+   * @return {number} difference in milliseconds
+   */
+  function fromNow(date) {
+    return new Date() - date;
   }
 
-  window.statsc = statsc;
+  /**
+   * Expose `statsc` to the world
+   */
+  if (typeof require == 'function' && module) {
+    module.exports = statsc;
+  }
+  if (typeof window == 'object') {
+    window.statsc = statsc;
+  }
 
 })();
