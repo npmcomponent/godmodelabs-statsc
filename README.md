@@ -5,12 +5,8 @@ StatsC lets you log statistics to your graphite/statsd servers straight from the
 
 Just like StatsD, StatsC is a fire and forget thing. StatsC can't take your site down if it fails, only statistics won't get logged.
 
-It supports 2 transports:
-
-* **Ajax** (default): Statistics are aggregated and flushed every 10s
-* **Websockets**: Statistics are transmitted immediately
-
-However websockets are only recommended if you already have socket.io included in your site.
+StatsC is __transport agnostic__ so you can use whatever transport method you want.
+By default it uses script-tags to provide cross domain ajax without using any libraries.
 
 Installation
 ------------
@@ -86,7 +82,7 @@ License
 -------
 (MIT)
 
-Copyright (c) 2012 Julian Gruber <jgruber@boerse-go.de>
+Copyright (c) 2012 Julian Gruber &lt;jgruber@boerse-go.de&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
