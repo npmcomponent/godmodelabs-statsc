@@ -4,6 +4,7 @@ var statsc = require('../');
 var http = require('http');
 
 var port = process.env.PORT || 8127;
+statsc.setAddress('localhost:8125');
 
 http.createServer(statsc.http).listen(port, function() {
 	console.log('StatsC server listening on port '+port);
