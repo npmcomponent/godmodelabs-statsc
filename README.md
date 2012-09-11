@@ -17,7 +17,7 @@ Installation
 ```bash
 $ sudo npm install -g statsc
 $ statsc-server
-  StatsC server listening on port 8126
+  StatsC server listening on port 8127
 ```
 
 or
@@ -30,8 +30,8 @@ $ npm install statsc
 var statsc = require('statsc');
 var http = require('http');
 
-http.createServer(statsc.http).listen(8126, function() {
-  console.log('StatsC server listening on port 8126');
+http.createServer(statsc.http).listen(8127, function() {
+  console.log('StatsC server listening on port 8127');
 });
 ```
 
@@ -43,7 +43,7 @@ In your `<head>`:
 <script src="https://raw.github.com/juliangruber/statsc/master/client.js"></script>
 ```
 
-StatsC automatically sends collected metrics to `http://localhost:8126/` over the standard transport.
+StatsC automatically sends collected metrics to `http://localhost:8127/` over the standard transport.
 
 You can scale this thing up easily by just picking one of your available servers randomly, like:
 
@@ -76,7 +76,7 @@ Client API
 ----------
 
 ### statsc.connect(addr)
-Use this if the server isnt listening on `http://localhost:8126` or perhaps if you are using a custom `send` method.
+Use this if the server isnt listening on `http://localhost:8127` or perhaps if you are using a custom `send` method.
 
 ### statsc.increment(stat[, sampleRate])
 Increment the counter at `stat` by 1.

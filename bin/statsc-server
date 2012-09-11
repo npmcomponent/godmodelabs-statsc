@@ -3,6 +3,12 @@
 var statsc = require('../');
 var http = require('http');
 
-http.createServer(statsc.http).listen(8126, function() {
-  console.log('StatsC server listening on port 8126');
+var port = process.env.PORT || 8127;
+
+http.createServer(statsc.http).listen(port, function() {
+	console.log('StatsC server listening on port '+port);
+});
+
+process.on('uncaughtException', function(err) {
+	console.error(err);
 });

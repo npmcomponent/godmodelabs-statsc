@@ -9,7 +9,7 @@
 	 */
 
 	var statsc = {};
-	var addr = 'http://localhost:8126/';
+	var addr = 'http://localhost:8127/';
 
 	/**
 	 * Set the statsc server address.
