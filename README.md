@@ -62,9 +62,6 @@ HTTP(s) server handle. Pass to http(s).createServer() in order to handle the sta
 ### statsc.receive(op)
 Logs `op` to StatsD.
 
-### statsc.setAddress(addr)
-Configure the address at which StatsD runs.
-
 You have to use this if you don't use `statsc.http`.
 
 Example with Learnboost/socket.io:
@@ -74,6 +71,9 @@ socket.on('statsc', function(data) {
  statsc.receive(data);
 });
 ```
+
+### statsc.setAddress(addr)
+Configure the address at which StatsD runs.
 
 Client API
 ----------
