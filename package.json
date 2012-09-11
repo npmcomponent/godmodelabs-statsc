@@ -1,6 +1,6 @@
 {
 	"name": "statsc",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"author": "Julian Gruber <jgruber@boerse-go.de>",
 	"repository": "git://github.com/BoerseGo-AG/statsc",
 	"dependencies": {
