@@ -40,7 +40,7 @@ http.createServer(statsc.http).listen(8127, function() {
 In your `<head>`:
 
 ```html
-<script src="https://raw.github.com/juliangruber/statsc/master/client.js"></script>
+<script src="https://raw.github.com/BoerseGo-AG/statsc/master/client.js"></script>
 ```
 
 StatsC automatically sends collected metrics to `http://localhost:8127/` over the standard transport.
