@@ -1,5 +1,5 @@
-StatsC
-======
+
+# StatsC
 
 StatsC lets you log statistics to your graphite/statsd servers straight from the browser.
 
@@ -9,8 +9,7 @@ StatsC is __transport agnostic__ so you can use whatever transport method you wa
 
 By default it uses script-tags to provide cross domain ajax without using any libraries. Logging operations are buffered for 5s and then transmitted together.
 
-Installation
-------------
+## Installation
 
 ### Server
 
@@ -40,7 +39,7 @@ http.createServer(statsc.http).listen(8127, function() {
 In your `<head>`:
 
 ```html
-<script src="https://raw.github.com/BoerseGo-AG/statsc/master/client.js"></script>
+<script src="https://raw.github.com/godmodelabs/statsc/master/client.js"></script>
 ```
 
 StatsC automatically sends collected metrics to `http://localhost:8127/` over the standard transport.
@@ -53,8 +52,7 @@ var port = availablePorts[Math.round(Math.random()*availablePorts.length)-1];
 stats.connect('addr:'+port);
 ```
 
-Server API
-----------
+## Server API
 
 ### statsc.http(req, res)
 HTTP(s) server handle. Pass to http(s).createServer() in order to handle the standard script-tag transport.
@@ -75,8 +73,7 @@ socket.on('statsc', function(data) {
 ### statsc.setAddress(addr)
 Configure the address at which StatsD runs.
 
-Client API
-----------
+## Client API
 
 ### statsc.connect(addr)
 Use this if the server isnt listening on `http://localhost:8127` or perhaps if you are using a custom `send` method.
@@ -117,8 +114,8 @@ statsc.send = function(data) {
 };
 ```
 
-License
--------
+## License
+
 (MIT)
 
 Copyright (c) 2012 Julian Gruber &lt;jgruber@boerse-go.de&gt;
