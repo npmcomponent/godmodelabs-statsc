@@ -1,12 +1,12 @@
 {
-	"name": "statsc",
-	"version": "0.2.3",
-	"author": "Julian Gruber <jgruber@boerse-go.de>",
-	"repository": "git://github.com/godmodelabs/statsc",
-	"dependencies": {
-		"statistik": "0.0.7"
-	},
-	"bin": {
-		"statsc-server": "./bin/statsc-server"
-	}
+  "name": "statsc",
+  "version": "0.2.4",
+  "author": "Julian Gruber <jgruber@boerse-go.de>",
+  "repository": "git://github.com/godmodelabs/statsc",
+  "dependencies": {
+    "statistik": "0.0.7"
+  },
+  "bin": {
+    "statsc-server": "./bin/statsc-server"
+  }
 }
