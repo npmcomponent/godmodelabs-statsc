@@ -17,8 +17,7 @@
    * Use this if the server isnt listening on `http://localhost:8126`
    * or perhaps if you are using a custom `send` method.
    * 
-   * @param  {[type]} _addr [description]
-   * @return {[type]}       [description]
+   * @param  {String} _addr
    */
   statsc.connect = function(_addr) {
     addr = _addr;
