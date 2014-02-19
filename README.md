@@ -1,4 +1,3 @@
-
 # StatsC
 
 StatsC lets you log statistics to your graphite/statsd servers straight from the browser.
@@ -39,7 +38,7 @@ http.createServer(statsc.http).listen(8127, function() {
 In your `<head>`:
 
 ```html
-<script src="https://raw.github.com/godmodelabs/statsc/master/client.js"></script>
+<script src="https://rawgithub.com/godmodelabs/statsc/master/client.js"></script>
 ```
 
 StatsC automatically sends collected metrics to `http://localhost:8127/` over the standard transport.
