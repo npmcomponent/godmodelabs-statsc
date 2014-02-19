@@ -35,7 +35,13 @@ http.createServer(statsc.http).listen(8127, function() {
 
 ### Client
 
-In your `<head>`:
+Include the client script in your `<head>`:
+
+```html
+<script src="client.js"></script>
+```
+
+For testing you can serve it from rawgithub.com:
 
 ```html
 <script src="https://rawgithub.com/godmodelabs/statsc/master/client.js"></script>
