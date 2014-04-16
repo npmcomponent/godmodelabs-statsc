@@ -1,6 +1,6 @@
 {
   "name": "statsc",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "author": "Julian Gruber <jgruber@boerse-go.de>",
   "repository": "git://github.com/godmodelabs/statsc",
   "dependencies": {
