@@ -1,3 +1,4 @@
+*This repository is a mirror of the [component](http://component.io) module [godmodelabs/statsc](http://github.com/godmodelabs/statsc). It has been modified to work with NPM+Browserify. You can install it using the command `npm install npmcomponent/godmodelabs-statsc`. Please do not open issues or send pull requests against this repo. If you have issues with this repo, report it to [npmcomponent](https://github.com/airportyh/npmcomponent).*
 # StatsC
 
 StatsC lets you log statistics to your graphite/statsd servers straight from the browser.
